@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronUp, ChevronDown } from 'lucide-react';
+import { ChevronUp, ChevronDown, Trash2 } from 'lucide-react';
 
 type ScheduleItem = {
   id: string;
@@ -30,7 +30,7 @@ const TimePicker = ({ value, onChange }: { value: string, onChange: (val: string
   }, [h12, m, isPM]);
 
   const hours = Array.from({ length: 12 }, (_, i) => i + 1);
-  const minutes = ['15', '30', '45'];
+  const minutes = ['00', '15', '30', '45'];
 
   return (
     <div className="flex flex-col gap-1 w-full md:w-auto">
@@ -138,9 +138,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen p-4 md:p-8 font-mono uppercase tracking-tight selection:bg-white selection:text-black max-w-4xl mx-auto flex flex-col">
-      <header className="mb-16 pt-8 text-center">
-        <h1 className="text-3xl md:text-5xl font-light tracking-[0.2em] border-y border-white py-4 inline-block px-8">
-          FUCKING SCHEDULER
+      <header className="mb-16 pt-12 text-center">
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tighter">
+          Fucking <span className="text-white/90">Schedule</span>
         </h1>
       </header>
 
@@ -213,22 +213,21 @@ export default function App() {
                 </h2>
                 <div className="space-y-4">
                   {groupedItems[dateStr].map(item => (
-                    <div key={item.id} className="border border-white p-4 rounded-2xl flex flex-col md:flex-row justify-between gap-4 group hover:bg-white hover:text-black transition-colors">
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-baseline gap-3">
-                          <span className="text-xl font-black">{item.time}</span>
-                          <span className="text-lg font-bold truncate">{item.address}</span>
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-sm font-bold opacity-70 group-hover:opacity-100">{item.contractorName}</span>
-                          {item.note && <p className="text-xs mt-1 opacity-60 group-hover:opacity-100 italic">{item.note}</p>}
+                    <div key={item.id} className="border border-white p-6 rounded-2xl flex flex-col md:flex-row justify-between gap-6 group hover:bg-white hover:text-black transition-colors">
+                      <div className="flex-1 space-y-4">
+                        <div className="text-2xl font-black">{item.time}</div>
+                        <div className="text-xl font-bold leading-tight">{item.address}</div>
+                        <div className="flex flex-col pt-3 border-t border-white/20 group-hover:border-black/20 space-y-1">
+                          <span className="text-lg font-bold opacity-80 group-hover:opacity-100">{item.contractorName}</span>
+                          {item.note && <p className="text-base opacity-60 group-hover:opacity-100 italic">{item.note}</p>}
                         </div>
                       </div>
                       <button 
                         onClick={() => deleteItem(item.id)}
-                        className="text-xs px-4 py-2 border border-white group-hover:border-black hover:!bg-red-600 hover:!text-white hover:!border-red-600 self-end md:self-center rounded-full"
+                        className="p-3 border border-white group-hover:border-black hover:!bg-red-600 hover:!text-white hover:!border-red-600 self-end md:self-center rounded-full transition-colors"
+                        aria-label="Delete item"
                       >
-                        REMOVE
+                        <Trash2 size={18} />
                       </button>
                     </div>
                   ))}
