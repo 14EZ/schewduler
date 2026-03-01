@@ -214,10 +214,10 @@ export default function App() {
                 <div className="space-y-4">
                   {groupedItems[dateStr].map(item => (
                     <div key={item.id} className="border border-white p-6 rounded-2xl flex flex-col md:flex-row justify-between gap-6 group hover:bg-white hover:text-black transition-colors">
-                      <div className="flex-1 space-y-4">
+                      <div className="flex-1 space-y-2">
                         <div className="text-2xl font-black">{item.time}</div>
                         <div className="text-xl font-bold leading-tight">{item.address}</div>
-                        <div className="flex flex-col pt-3 border-t border-white/20 group-hover:border-black/20 space-y-1">
+                        <div className="flex flex-col pt-2 border-t border-white/20 group-hover:border-black/20 space-y-1">
                           <span className="text-lg font-bold opacity-80 group-hover:opacity-100">{item.contractorName}</span>
                           {item.note && <p className="text-base opacity-60 group-hover:opacity-100 italic">{item.note}</p>}
                         </div>
