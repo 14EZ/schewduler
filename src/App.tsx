@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronUp, ChevronDown, Trash2 } from 'lucide-react';
+import { ChevronUp, ChevronDown, Trash2, Pencil, X } from 'lucide-react';
 
 type ScheduleItem = {
   id: string;
@@ -87,28 +87,55 @@ export default function App() {
   const [address, setAddress] = useState('');
   const [contractorName, setContractorName] = useState('');
   const [note, setNote] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const addItem = (e: React.FormEvent) => {
     e.preventDefault();
     if (!date || !time || !address || !contractorName) return;
 
     const upperAddress = address.toUpperCase();
-    const newItem: ScheduleItem = {
-      id: crypto.randomUUID(),
-      date,
-      time,
-      address: upperAddress,
-      contractorName: contractorName.toUpperCase(),
-      note: note.toUpperCase(),
-    };
-
-    setItems([...items, newItem]);
+    
+    if (editingId) {
+      setItems(items.map(item => 
+        item.id === editingId 
+          ? { ...item, date, time, address: upperAddress, contractorName: contractorName.toUpperCase(), note: note.toUpperCase() }
+          : item
+      ));
+      setEditingId(null);
+    } else {
+      const newItem: ScheduleItem = {
+        id: crypto.randomUUID(),
+        date,
+        time,
+        address: upperAddress,
+        contractorName: contractorName.toUpperCase(),
+        note: note.toUpperCase(),
+      };
+      setItems([...items, newItem]);
+    }
     
     // Save address if new
     if (!savedAddresses.includes(upperAddress)) {
       setSavedAddresses([...savedAddresses, upperAddress]);
     }
     
+    setAddress('');
+    setContractorName('');
+    setNote('');
+  };
+
+  const startEditing = (item: ScheduleItem) => {
+    setEditingId(item.id);
+    setDate(item.date);
+    setTime(item.time);
+    setAddress(item.address);
+    setContractorName(item.contractorName);
+    setNote(item.note);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const cancelEditing = () => {
+    setEditingId(null);
     setAddress('');
     setContractorName('');
     setNote('');
@@ -193,9 +220,20 @@ export default function App() {
                 className="text-lg min-h-[100px]"
               />
             </div>
-            <button type="submit" className="w-full text-xl py-6 font-black border-2 border-white hover:bg-white hover:text-black transition-colors rounded-full">
-              ADD TO PLANNER
-            </button>
+            <div className="flex gap-4">
+              <button type="submit" className="flex-1 text-xl py-6 font-black border-2 border-white hover:bg-white hover:text-black transition-colors rounded-full">
+                {editingId ? 'UPDATE ITEM' : 'ADD TO PLANNER'}
+              </button>
+              {editingId && (
+                <button 
+                  type="button" 
+                  onClick={cancelEditing}
+                  className="px-8 text-xl py-6 font-black border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white transition-colors rounded-full flex items-center justify-center"
+                >
+                  <X size={24} />
+                </button>
+              )}
+            </div>
           </form>
         </section>
 
@@ -222,13 +260,22 @@ export default function App() {
                           {item.note && <p className="text-base opacity-60 group-hover:opacity-100 italic">{item.note}</p>}
                         </div>
                       </div>
-                      <button 
-                        onClick={() => deleteItem(item.id)}
-                        className="p-3 border border-white group-hover:border-black hover:!bg-red-600 hover:!text-white hover:!border-red-600 self-end md:self-center rounded-full transition-colors"
-                        aria-label="Delete item"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                      <div className="flex gap-2 self-end md:self-center">
+                        <button 
+                          onClick={() => startEditing(item)}
+                          className="p-3 border border-white opacity-80 group-hover:opacity-100 group-hover:border-black group-hover:text-black self-end md:self-center rounded-full transition-all"
+                          aria-label="Edit item"
+                        >
+                          <Pencil size={18} />
+                        </button>
+                        <button 
+                          onClick={() => deleteItem(item.id)}
+                          className="p-3 border border-white opacity-80 group-hover:opacity-100 group-hover:border-black group-hover:text-black self-end md:self-center rounded-full transition-all"
+                          aria-label="Delete item"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
