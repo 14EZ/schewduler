@@ -37,19 +37,27 @@ const TimePicker = ({ value, onChange }: { value: string, onChange: (val: string
       <label className="text-[10px] font-bold opacity-50">TIME</label>
       <div className="flex gap-2">
         <select 
-          value={`${h12}:${m}`}
-          onChange={(e) => {
-            const [newH, newM] = e.target.value.split(':');
-            setH12(Number(newH));
-            setM(newM);
-          }}
+          value={h12}
+          onChange={(e) => setH12(Number(e.target.value))}
           className="text-lg font-black bg-black border border-white rounded-lg p-2 appearance-auto"
         >
-          {hours.flatMap(h => minutes.map(min => (
-            <option key={`${h}:${min}`} value={`${h}:${min}`}>
-              {h}:{min}
+          {hours.map(h => (
+            <option key={h} value={h}>
+              {h}
             </option>
-          )))}
+          ))}
+        </select>
+        <span className="text-2xl font-black self-center">:</span>
+        <select 
+          value={m}
+          onChange={(e) => setM(e.target.value)}
+          className="text-lg font-black bg-black border border-white rounded-lg p-2 appearance-auto"
+        >
+          {minutes.map(min => (
+            <option key={min} value={min}>
+              {min}
+            </option>
+          ))}
         </select>
         <button
           type="button"
@@ -254,7 +262,13 @@ export default function App() {
                     <div key={item.id} className="border border-white p-6 rounded-2xl flex flex-col md:flex-row justify-between gap-6 group hover:bg-white hover:text-black transition-colors">
                       <div className="flex-1 space-y-2">
                         <div className="text-2xl font-black">{item.time}</div>
-                        <div className="text-xl font-bold leading-tight">{item.address}</div>
+                        <div 
+                          className="text-xl font-bold leading-tight cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={() => navigator.clipboard.writeText(item.address)}
+                          title="Copy address"
+                        >
+                          {item.address}
+                        </div>
                         <div className="flex flex-col pt-2 border-t border-white/20 group-hover:border-black/20 space-y-1">
                           <span className="text-lg font-bold opacity-80 group-hover:opacity-100">{item.contractorName}</span>
                           {item.note && <p className="text-base opacity-60 group-hover:opacity-100 italic">{item.note}</p>}
